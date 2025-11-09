@@ -6,41 +6,61 @@
   <title>Агар-агар — тренажёр (карточки + викторины)</title>
   <style>
     :root{
-      --bg:#0b0f14;--panel:#121821;--muted:#8aa0b2;--text:#e8f0f7;--accent:#58d68d;--accent2:#6ec1ff;--warn:#ffb74d;--wrong:#ff6b6b;
+      /* Красно-чёрная палитра */
+      --bg:#0a0a0b;              /* фон */
+      --bg2:#111114;             /* панели */
+      --panel-grad:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+      --text:#f6f6f6;
+      --muted:#bfbfc3;
+      --accent:#ff3546;          /* основной красный */
+      --accent-2:#ff6a75;        /* светлее */
+      --accent-dk:#c81e2a;       /* темнее */
+      --ok:#2fd27f;
+      --warn:#ffb74d;
+      --wrong:#ff6b6b;
       --radius:16px;
+      --ring:0 0 0 2px rgba(255,53,70,.35);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;background:radial-gradient(1200px 600px at 20% -10%,#1b2330 0%,#0b0f14 50%) no-repeat #0b0f14;
-      color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 20% -10%,#1a0f12 0%,transparent 50%) no-repeat,
+        radial-gradient(900px 500px at 120% 50%,rgba(200,30,42,.15) 0%,transparent 60%) no-repeat,
+        var(--bg);
+      color:var(--text);
+      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
       display:flex;align-items:start;justify-content:center;padding:16px;
     }
     .app{width:min(1100px,100%);display:grid;gap:14px}
     header{
-      position:sticky;top:8px;z-index:5;background:linear-gradient(180deg,rgba(11,15,20,.9),rgba(11,15,20,.6));
+      position:sticky;top:8px;z-index:5;background:rgba(10,10,11,.7);
       backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:10px 12px;
       display:flex;gap:10px;align-items:center;justify-content:space-between
     }
-    .title{font-size:clamp(20px,3.3vw,30px);font-weight:700;letter-spacing:.3px}
-    .mode{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:999px}
+    .title{font-size:clamp(20px,3.3vw,30px);font-weight:800;letter-spacing:.3px}
+    .mode{display:flex;gap:8px;background:#151417;padding:6px;border-radius:999px;border:1px solid rgba(255,255,255,.06)}
     .mode button{
       border:0;background:transparent;color:var(--muted);padding:10px 14px;border-radius:999px;cursor:pointer;
-      font-weight:600;letter-spacing:.2px;transition:.2s;min-width:110px
+      font-weight:700;letter-spacing:.2px;transition:.2s;min-width:110px
     }
-    .mode button.active{color:#001014;background:var(--accent)}
-    .panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);
-      border-radius:var(--radius);padding:16px}
+    .mode button.active{color:#100305;background:var(--accent);box-shadow:0 6px 20px rgba(255,53,70,.35)}
+    .panel{
+      background:var(--panel-grad);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);padding:16px
+    }
     .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
     @media (max-width:900px){.two-col{grid-template-columns:1fr}}
-    .pill{display:inline-flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);background:rgba(255,255,255,.06);
+    .pill{display:inline-flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);background:#17161a;
       padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08)}
     .sep{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
     /* Flashcards */
     .card{
-      position:relative;min-height:220px;border-radius:14px;background:linear-gradient(180deg,#101826,#0f1520);
+      position:relative;min-height:220px;border-radius:14px;background:linear-gradient(180deg,#170e10,#0f0f12);
       border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;padding:18px;text-align:center;
-      cursor:pointer;perspective:1000px;box-shadow:0 10px 30px rgba(0,0,0,.35);
+      cursor:pointer;perspective:1000px;box-shadow:0 10px 30px rgba(0,0,0,.45);
     }
     @media (max-width:560px){ .card{min-height:180px;padding:14px} }
     .card-inner{position:relative;transform-style:preserve-3d;transition:transform .5s}
@@ -48,8 +68,8 @@
     .face{
       position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;border-radius:12px;backface-visibility:hidden;
     }
-    .front{color:var(--accent2)}
-    .back{transform:rotateY(180deg);background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.1)}
+    .front{color:var(--accent-2)}
+    .back{transform:rotateY(180deg);background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.12)}
     .card h3{
       margin:0 auto;font-size:clamp(18px,2.6vw,22px);line-height:1.25;max-width:40ch;
       word-break:normal;overflow-wrap:normal;white-space:normal;hyphens:none;
@@ -57,43 +77,61 @@
     .card p{margin:10px 0 0;color:var(--muted)}
     .fc-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:12px}
     .btn{
-      border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--text);
-      padding:10px 14px;border-radius:10px;cursor:pointer;transition:.2s;font-weight:600
+      border:1px solid rgba(255,255,255,.12);background:#17161a;color:var(--text);
+      padding:10px 14px;border-radius:10px;cursor:pointer;transition:.2s;font-weight:700
     }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.primary{background:var(--accent);color:#001014;border-color:transparent}
+    .btn:hover{transform:translateY(-1px);box-shadow:var(--ring)}
+    .btn.primary{background:var(--accent);color:#100305;border-color:transparent}
     .btn.ghost{background:transparent}
-    .key{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0b1220;border:1px solid rgba(255,255,255,.1);padding:2px 6px;border-radius:6px}
+    .key{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0e0e10;border:1px solid rgba(255,255,255,.12);padding:2px 6px;border-radius:6px}
     /* Quiz */
     .q-wrap{display:grid;gap:10px}
-    .q{padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.03)}
+    .q{padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:#121114}
     .q h4{margin:0 0 8px}
     .options{display:grid;gap:8px}
     .opt{
-      border:1px solid rgba(255,255,255,.1);background:#0f1520;padding:10px 12px;border-radius:10px;cursor:pointer;transition:.18s
+      border:1px solid rgba(255,255,255,.12);background:#0f0f12;padding:10px 12px;border-radius:10px;cursor:pointer;transition:.18s
     }
-    .opt:hover{transform:translateY(-1px)}
-    .opt.correct{outline:2px solid var(--accent)}
+    .opt:hover{transform:translateY(-1px);box-shadow:var(--ring)}
+    .opt.correct{outline:2px solid var(--ok)}
     .opt.wrong{outline:2px solid var(--wrong)}
     .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
     .score{color:var(--muted)}
     .badge{padding:2px 8px;border-radius:999px;font-size:12px}
-    .ok{background:rgba(88,214,141,.15);color:var(--accent);border:1px solid rgba(88,214,141,.35)}
+    .ok{background:rgba(47,210,127,.15);color:var(--ok);border:1px solid rgba(47,210,127,.35)}
     .bad{background:rgba(255,107,107,.15);color:var(--wrong);border:1px solid rgba(255,107,107,.35)}
     .muted{color:var(--muted)}
-    .explain{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .explain{margin-top:12px;padding:12px;border-radius:12px;background:#161518;border:1px solid rgba(255,255,255,.1)}
     .explain h5{margin:0 0 8px;font-size:14px;color:var(--muted)}
     .pack{display:flex;gap:8px;align-items:center}
-    select{background:#101724;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 10px}
-    footer{opacity:.7;text-align:center;font-size:12px}
+    select{background:#100f13;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 10px}
+    footer{opacity:.75;text-align:center;font-size:12px}
     /* mobile buttons fill */
     @media (max-width:560px){
       .btn{flex:1 1 calc(50% - 8px);text-align:center}
       .mode button{min-width:unset}
     }
+    /* Плавающая кнопка Телеграма */
+    .tg-fab{
+      position:fixed;right:clamp(12px,2.4vw,18px);bottom:calc(12px + env(safe-area-inset-bottom));
+      z-index:1000;display:inline-flex;align-items:center;gap:10px;
+      padding:12px 14px;border-radius:999px;
+      background:linear-gradient(180deg,var(--accent),var(--accent-dk));
+      color:#100305;border:1px solid rgba(255,255,255,.12);
+      text-decoration:none;font-weight:800;letter-spacing:.2px;
+      box-shadow:0 10px 30px rgba(255,53,70,.35);
+    }
+    .tg-fab:hover{transform:translateY(-2px)}
+    .tg-fab svg{width:20px;height:20px;fill:#100305}
   </style>
 </head>
 <body>
+  <a class="tg-fab" href="https://t.me/TomSemm" target="_blank" rel="noopener">
+    <!-- иконка телеги -->
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.75 15.02 9.6 19.5c.42 0 .6-.18.81-.4l1.94-1.86 4.02 2.95c.74.41 1.27.2 1.47-.68l2.67-12.55.01-.01c.24-1.13-.41-1.58-1.13-1.3L3.7 9.34c-1.1.43-1.08 1.05-.19 1.33l4.74 1.48L18.9 6.8c.56-.34 1.07-.15.65.19"/></svg>
+    Подписаться на тг
+  </a>
+
   <div class="app">
     <header>
       <div class="title">Агар-агар — тренажёр</div>
@@ -194,7 +232,7 @@
       {q:'Диспергирование', a:'в холодной или горячей воде'},
       {q:'Тип геля / поведение', a:'термореверсивный хрупкий гель; выраженная гистерезис'},
       {q:'Вязкость раствора', a:'низкая'},
-      {q:'Типичные дозировки', a:'0,2 % — схватывается; 0,5 % — плотный желе'},
+      {q:'Типичные дозировки', a:'0,2 % — схватывается; 0,5 % — плотный, режущийся желе'},
       {q:'Промоутеры / улучшители', a:'сахар; сорбит/глицерин повышают эластичность'},
       {q:'Ингибиторы', a:'длительный нагрев при pH вне 5,5–8; таннины (смягчает глицерин)'},
       {q:'Синергия', a:'с рожковой камедью (locust/carob bean gum)'}
@@ -228,7 +266,7 @@
       if(['KeyA','ArrowLeft'].includes(e.code)) prev();
     });
 
-    /* ---------- ДАННЫЕ: викторины (несколько паков) ---------- */
+    /* ---------- ДАННЫЕ: викторины ---------- */
     const PACKS = {
       base: [
         {
@@ -335,7 +373,7 @@
       if(state.checked) return;
       state.answers.set(qi,oi);
       node.parentElement.querySelectorAll('.opt').forEach(b=>b.style.outline='none');
-      node.style.outline='2px solid var(--accent2)';
+      node.style.outline='2px solid var(--accent-2)';
       $('score').textContent = `${state.answers.size}/${PACKS[currentPack].length}`;
     }
     function check(){
@@ -370,7 +408,7 @@
     $('retry').addEventListener('click', renderQuiz);
     $('packSel').addEventListener('change', e=>{ currentPack=e.target.value; renderQuiz(); window.scrollTo({top:0,behavior:'smooth'}); });
 
-    /* ---------- ТАБЫ (всегда доступны) ---------- */
+    /* ---------- ТАБЫ ---------- */
     const tabFlash = $('tabFlash'), tabQuiz = $('tabQuiz');
     function switchTab(which){
       const isFlash = which==='flash';
@@ -380,7 +418,6 @@
       tabQuiz.classList.toggle('active',!isFlash);
       tabFlash.setAttribute('aria-selected',isFlash);
       tabQuiz.setAttribute('aria-selected',!isFlash);
-      // авто-скролл к началу контента
       window.scrollTo({top:0,behavior:'smooth'});
     }
     tabFlash.addEventListener('click',()=>switchTab('flash'));
