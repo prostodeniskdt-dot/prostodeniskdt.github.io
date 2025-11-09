@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Агар-агар — тренажёр (карточки + викторина)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Агар-агар — тренажёр (карточки + викторины)</title>
   <style>
     :root{
       --bg:#0b0f14;--panel:#121821;--muted:#8aa0b2;--text:#e8f0f7;--accent:#58d68d;--accent2:#6ec1ff;--warn:#ffb74d;--wrong:#ff6b6b;
@@ -14,38 +14,46 @@
     body{
       margin:0;background:radial-gradient(1200px 600px at 20% -10%,#1b2330 0%,#0b0f14 50%) no-repeat #0b0f14;
       color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
-      display:flex;align-items:center;justify-content:center;padding:24px;
+      display:flex;align-items:start;justify-content:center;padding:16px;
     }
-    .app{width:min(1040px,100%);display:grid;gap:16px}
-    header{display:flex;gap:12px;align-items:center;justify-content:space-between}
-    .title{font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:.3px}
+    .app{width:min(1100px,100%);display:grid;gap:14px}
+    header{
+      position:sticky;top:8px;z-index:5;background:linear-gradient(180deg,rgba(11,15,20,.9),rgba(11,15,20,.6));
+      backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:10px 12px;
+      display:flex;gap:10px;align-items:center;justify-content:space-between
+    }
+    .title{font-size:clamp(20px,3.3vw,30px);font-weight:700;letter-spacing:.3px}
     .mode{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:999px}
     .mode button{
       border:0;background:transparent;color:var(--muted);padding:10px 14px;border-radius:999px;cursor:pointer;
-      font-weight:600;letter-spacing:.2px;transition:.2s;
+      font-weight:600;letter-spacing:.2px;transition:.2s;min-width:110px
     }
     .mode button.active{color:#001014;background:var(--accent)}
     .panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);
-      border-radius:var(--radius);padding:18px}
-    .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+      border-radius:var(--radius);padding:16px}
+    .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
     @media (max-width:900px){.two-col{grid-template-columns:1fr}}
     .pill{display:inline-flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);background:rgba(255,255,255,.06);
       padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08)}
     .sep{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
     /* Flashcards */
     .card{
-      position:relative;min-height:240px;border-radius:14px;background:linear-gradient(180deg,#101826,#0f1520);
-      border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;padding:22px;text-align:center;
+      position:relative;min-height:220px;border-radius:14px;background:linear-gradient(180deg,#101826,#0f1520);
+      border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;padding:18px;text-align:center;
       cursor:pointer;perspective:1000px;box-shadow:0 10px 30px rgba(0,0,0,.35);
     }
+    @media (max-width:560px){ .card{min-height:180px;padding:14px} }
     .card-inner{position:relative;transform-style:preserve-3d;transition:transform .5s}
     .card.flipped .card-inner{transform:rotateY(180deg)}
     .face{
-      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;border-radius:12px;backface-visibility:hidden;
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;border-radius:12px;backface-visibility:hidden;
     }
     .front{color:var(--accent2)}
     .back{transform:rotateY(180deg);background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.1)}
-    .card h3{margin:0;font-size:clamp(18px,2.2vw,22px)}
+    .card h3{
+      margin:0 auto;font-size:clamp(18px,2.6vw,22px);line-height:1.25;max-width:40ch;
+      word-break:normal;overflow-wrap:normal;white-space:normal;hyphens:none;
+    }
     .card p{margin:10px 0 0;color:var(--muted)}
     .fc-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:12px}
     .btn{
@@ -73,19 +81,29 @@
     .ok{background:rgba(88,214,141,.15);color:var(--accent);border:1px solid rgba(88,214,141,.35)}
     .bad{background:rgba(255,107,107,.15);color:var(--wrong);border:1px solid rgba(255,107,107,.35)}
     .muted{color:var(--muted)}
+    .explain{margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .explain h5{margin:0 0 8px;font-size:14px;color:var(--muted)}
+    .pack{display:flex;gap:8px;align-items:center}
+    select{background:#101724;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 10px}
     footer{opacity:.7;text-align:center;font-size:12px}
+    /* mobile buttons fill */
+    @media (max-width:560px){
+      .btn{flex:1 1 calc(50% - 8px);text-align:center}
+      .mode button{min-width:unset}
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <header class="panel">
+    <header>
       <div class="title">Агар-агар — тренажёр</div>
-      <div class="mode" role="tablist" aria-label="Режимы">
+      <nav class="mode" role="tablist" aria-label="Режимы">
         <button id="tabFlash" class="active" role="tab" aria-selected="true">Карточки</button>
         <button id="tabQuiz" role="tab" aria-selected="false">Викторина</button>
-      </div>
+      </nav>
     </header>
 
+    <!-- FLASHCARDS -->
     <section id="flashView" class="two-col">
       <div class="panel">
         <div class="row" style="margin-bottom:8px">
@@ -110,7 +128,7 @@
         <div class="fc-controls">
           <button class="btn" id="prev">← Назад <span class="key">A</span></button>
           <button class="btn primary" id="flip">Перевернуть <span class="key">Space</span></button>
-          <button class="btn" id="next">Вперед → <span class="key">D</span></button>
+          <button class="btn" id="next">Вперёд → <span class="key">D</span></button>
           <button class="btn ghost" id="shuffle">Перемешать</button>
         </div>
       </div>
@@ -122,7 +140,7 @@
           <li>Тип: <b>термореверсивный</b> хрупкий гель; выраженная гистерезис.</li>
           <li>Диспергирование: <b>в холодной или горячей воде</b>.</li>
           <li>Гидратация: <b>&gt; 90 °C</b>, доводим до кипения для гелеобразования.</li>
-          <li>Установка геля: <b>35–45 °C</b> (минуты). Плавление: <b>80–90 °C</b>.</li>
+          <li>Установка геля: <b>35–45 °C</b> (мин). Плавление: <b>80–90 °C</b>.</li>
           <li>Диапазон pH: <b>2,5–10</b>.</li>
           <li>Вязкость раствора: <b>низкая</b>.</li>
           <li>Типичные дозировки: <b>0,2 % — схватывается; 0,5 % — плотный желе</b>.</li>
@@ -133,51 +151,63 @@
       </aside>
     </section>
 
+    <!-- QUIZ -->
     <section id="quizView" class="panel" hidden>
       <div class="row" style="margin-bottom:10px">
-        <div class="pill">Викторина: 6 вопросов</div>
+        <div class="pack">
+          <span class="pill">Викторина</span>
+          <label class="muted" for="packSel">Набор вопросов:</label>
+          <select id="packSel" aria-label="Выбор набора вопросов">
+            <option value="base">Быстрый тест (смешанный, 6)</option>
+            <option value="temps">Температуры и стадии</option>
+            <option value="doseph">Дозировки и pH</option>
+          </select>
+        </div>
         <div class="score" id="score">0/0</div>
       </div>
       <div id="quizContainer" class="q-wrap"></div>
       <div class="row" style="margin-top:12px">
-        <div class="muted">Подсказка: отвечай кликом или клавишами <span class="key">1-4</span></div>
+        <div class="muted">Подсказка: кликай или используй <span class="key">1-4</span></div>
         <div>
           <button class="btn" id="retry" hidden>Пройти снова</button>
           <button class="btn primary" id="check">Проверить</button>
         </div>
       </div>
+      <div id="explainBox" class="explain" hidden>
+        <h5>Разбор ответов</h5>
+        <div id="explainContent"></div>
+      </div>
     </section>
 
-    <footer>© Тренажёр для изучения раздела «Agar» (Texture — v2.3). Локально хранит лучший результат (localStorage).</footer>
+    <footer>© Тренажёр по разделу «Agar» (Texture v2.3). Лучший результат хранится локально (localStorage).</footer>
   </div>
 
   <script>
-    // --- ДАННЫЕ ДЛЯ АГАР-АГАРА ---
+    const $ = id => document.getElementById(id);
+
+    /* ---------- ДАННЫЕ: карточки ---------- */
     const cards = [
       {q:'Диапазон pH, в котором агар стабилен', a:'pH 2,5–10'},
-      {q:'Температура ГИДРАТАЦИИ (растворения) агар-агара', a:'> 90 °C; для гелеобразования доводим до кипения'},
-      {q:'Температура УСТАНОВКИ (set) геля', a:'≈ 35–45 °C (быстро, в течение минут)'},
+      {q:'Температура ГИДРАТАЦИИ (полного растворения)', a:'> 90 °C; довести до кипения для гелеобразования'},
+      {q:'Температура УСТАНОВКИ (set) геля', a:'≈ 35–45 °C (быстро, минуты)'},
       {q:'Температура ПЛАВЛЕНИЯ геля', a:'≈ 80–90 °C'},
-      {q:'Диспергируется в…', a:'в холодной или горячей воде'},
-      {q:'Тип геля/поведение', a:'термореверсивный, хрупкий гель; выраженная гистерезис'},
+      {q:'Диспергирование', a:'в холодной или горячей воде'},
+      {q:'Тип геля / поведение', a:'термореверсивный хрупкий гель; выраженная гистерезис'},
       {q:'Вязкость раствора', a:'низкая'},
       {q:'Типичные дозировки', a:'0,2 % — схватывается; 0,5 % — плотный желе'},
-      {q:'Промоутеры / улучшители', a:'сахар; сорбит и глицерин повышают эластичность'},
+      {q:'Промоутеры / улучшители', a:'сахар; сорбит/глицерин повышают эластичность'},
       {q:'Ингибиторы', a:'длительный нагрев при pH вне 5,5–8; таннины (смягчает глицерин)'},
       {q:'Синергия', a:'с рожковой камедью (locust/carob bean gum)'}
     ];
 
-    // --- FLASHCARDS ---
-    const el = id => document.getElementById(id);
+    /* ---------- FLASHCARDS ---------- */
     const fc = { idx:0, order:[...Array(cards.length).keys()], flipped:false };
-
     function renderFlash(){
       const item = cards[fc.order[fc.idx]];
-      el('fcFront').textContent = item.q;
-      el('fcBack').textContent  = item.a;
-      el('fcProgress').textContent = `Карточка ${fc.idx+1} / ${cards.length}`;
-      const card = el('flashCard');
-      card.classList.toggle('flipped', fc.flipped);
+      $('fcFront').textContent = item.q;
+      $('fcBack').textContent  = item.a;
+      $('fcProgress').textContent = `Карточка ${fc.idx+1} / ${cards.length}`;
+      $('flashCard').classList.toggle('flipped', fc.flipped);
     }
     function flip(){ fc.flipped = !fc.flipped; renderFlash(); }
     function next(){ fc.idx = (fc.idx+1)%cards.length; fc.flipped=false; renderFlash(); }
@@ -186,72 +216,107 @@
       for(let i=fc.order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [fc.order[i],fc.order[j]]=[fc.order[j],fc.order[i]]; }
       fc.idx=0; fc.flipped=false; renderFlash();
     }
-    // Events
-    el('flashCard').addEventListener('click', flip);
-    el('flip').addEventListener('click', flip);
-    el('next').addEventListener('click', next);
-    el('prev').addEventListener('click', prev);
-    el('shuffle').addEventListener('click', shuffle);
+    $('flashCard').addEventListener('click', flip);
+    $('flip').addEventListener('click', flip);
+    $('next').addEventListener('click', next);
+    $('prev').addEventListener('click', prev);
+    $('shuffle').addEventListener('click', shuffle);
     window.addEventListener('keydown', (e)=>{
-      if(document.getElementById('flashView').hasAttribute('hidden')) return;
+      if($('flashView').hasAttribute('hidden')) return;
       if(e.code==='Space'){e.preventDefault();flip();}
       if(['KeyD','ArrowRight'].includes(e.code)) next();
       if(['KeyA','ArrowLeft'].includes(e.code)) prev();
     });
 
-    // --- QUIZ ---
-    const quizQuestions = [
-      {
-        t:'Выбери пары «температура → стадия»:',
-        type:'mc',
-        options:[
-          '35–45 °C → установка (set)',
-          '80–90 °C → гидратация',
-          '≥90 °C → плавление',
-          '50–60 °C → плавление'
-        ],
-        correct:[0]
-      },
-      {
-        t:'При какой температуре агар ГИДРАТИРУЕТСЯ (должен раствориться полностью для гелеобразования)?',
-        type:'mc',
-        options:['50–60 °C','> 90 °C (с доведением до кипения)','30–40 °C','70–75 °C'],
-        correct:[1]
-      },
-      {
-        t:'Что усиливает эластичность агарового геля?',
-        type:'mc',
-        options:['Уксусная кислота','Сорбит или глицерин','Бикарбонат','Хлорид кальция'],
-        correct:[1]
-      },
-      {
-        t:'Верно ли, что агар образует ТЕРМОНЕОБРАТИМЫЕ гели?',
-        type:'tf',
-        options:['Верно','Неверно (агар термореверсивен)'],
-        correct:[1]
-      },
-      {
-        t:'Синергия, снижающая синерезис и повышающая эластичность:',
-        type:'mc',
-        options:['Агар + ксантан','Агар + каррагинан каппа','Агар + рожковая камедь (locust bean gum)','Агар + пектин HM'],
-        correct:[2]
-      },
-      {
-        t:'Какая типичная дозировка даст плотный желе?',
-        type:'mc',
-        options:['0,05 %','0,2 %','0,5 %','1,5 %'],
-        correct:[2]
-      }
-    ];
+    /* ---------- ДАННЫЕ: викторины (несколько паков) ---------- */
+    const PACKS = {
+      base: [
+        {
+          t:'Выбери верную пару «температура → стадия»:',
+          options:['35–45 °C → установка (set)','80–90 °C → гидратация','≥90 °C → плавление','50–60 °C → плавление'],
+          correct:[0],
+          why:'Агар схватывается при 35–45 °C, плавится около 80–90 °C, а гидратируется при >90 °C.'
+        },
+        {
+          t:'При какой температуре агар ГИДРАТИРУЕТСЯ (полностью растворяется)?',
+          options:['50–60 °C','> 90 °C (с доведением до кипения)','30–40 °C','70–75 °C'],
+          correct:[1],
+          why:'Для полноценного гелеобразования раствор доводят минимум до ~90–100 °C.'
+        },
+        { t:'Что повышает эластичность агарового геля?',
+          options:['Уксус','Сорбит или глицерин','Бикарбонат','CaCl₂'],
+          correct:[1],
+          why:'Сорбит/глицерин действуют как пластификаторы.'
+        },
+        { t:'Агар образует термонЕобратимые гели.',
+          options:['Верно','Неверно (агар термореверсивен)'],
+          correct:[1],
+          why:'Агар — термореверсивный: плавится ~80–90 °C и застывает снова при охлаждении.'
+        },
+        { t:'Синергия, снижающая синерезис и повышающая эластичность:',
+          options:['Агар + ксантан','Агар + κ-каррагинан','Агар + рожковая камедь','Агар + HM-пектин'],
+          correct:[2],
+          why:'Агар + LBG (рожковая камедь) — классическая пара.'
+        },
+        { t:'Какая дозировка даст плотный желе?',
+          options:['0,05 %','0,2 %','0,5 %','1,5 %'],
+          correct:[2],
+          why:'0,2 % уже схватывается, 0,5 % — плотный, режущийся желе.'
+        }
+      ],
+      temps: [
+        {
+          t:'Температура плавления агарового геля:',
+          options:['20–30 °C','50–60 °C','80–90 °C','>100 °C'],
+          correct:[2],
+          why:'Плавление ≈80–90 °C.'
+        },
+        {
+          t:'Температура установки (set):',
+          options:['15–25 °C','35–45 °C','60–70 °C','80–90 °C'],
+          correct:[1],
+          why:'Застывает быстро, в районе 35–45 °C.'
+        },
+        {
+          t:'Отметь верное утверждение:',
+          options:['Гидратация при 60–70 °C','Гидратация при >90 °C','Гидратация не требуется','Гидратация только в спирте'],
+          correct:[1],
+          why:'Растворяем при >90 °C (как правило доводим до кипения).'
+        }
+      ],
+      doseph: [
+        {
+          t:'Агар стабилен в диапазоне pH:',
+          options:['1–3','2,5–10','6–8','9–12'],
+          correct:[1],
+          why:'Рабочий диапазон ~2,5–10.'
+        },
+        {
+          t:'Минимальная дозировка, чтобы смесь схватывалась:',
+          options:['0,05 %','0,2 %','0,35 %','0,8 %'],
+          correct:[1],
+          why:'0,2 % уже даёт set.'
+        },
+        {
+          t:'Что может ухудшить результат?',
+          options:['Таннины и длительный нагрев при pH вне 5,5–8','Сахар','Сорбит/глицерин','Рожковая камедь'],
+          correct:[0],
+          why:'Таннины и экстремальные pH при длительном нагреве — плохая идея.'
+        }
+      ]
+    };
 
+    /* ---------- QUIZ ---------- */
+    let currentPack = 'base';
     const state = { answers:new Map(), checked:false };
+
     function renderQuiz(){
-      const host = el('quizContainer'); host.innerHTML='';
-      quizQuestions.forEach((q,qi)=>{
+      const data = PACKS[currentPack];
+      const host = $('quizContainer'); host.innerHTML='';
+      data.forEach((q,qi)=>{
         const wrap=document.createElement('div'); wrap.className='q';
         const h=document.createElement('h4'); h.textContent=`${qi+1}. ${q.t}`; wrap.appendChild(h);
         const opts=document.createElement('div'); opts.className='options';
-
         q.options.forEach((txt,oi)=>{
           const o=document.createElement('div'); o.className='opt'; o.tabIndex=0; o.textContent=txt;
           o.addEventListener('click',()=>pick(qi,oi,o));
@@ -260,60 +325,70 @@
         });
         wrap.appendChild(opts); host.appendChild(wrap);
       });
-      el('score').textContent='0/0';
-      el('retry').hidden=true;
+      $('score').textContent='0/'+data.length;
+      $('retry').hidden=true;
+      $('explainBox').hidden=true;
+      $('explainContent').innerHTML='';
       state.checked=false; state.answers.clear();
     }
     function pick(qi,oi,node){
       if(state.checked) return;
       state.answers.set(qi,oi);
-      const blocks = node.parentElement.querySelectorAll('.opt');
-      blocks.forEach(b=>b.style.outline='none');
+      node.parentElement.querySelectorAll('.opt').forEach(b=>b.style.outline='none');
       node.style.outline='2px solid var(--accent2)';
-      updateScorePreview();
-    }
-    function updateScorePreview(){
-      el('score').textContent = `${state.answers.size}/${quizQuestions.length}`;
+      $('score').textContent = `${state.answers.size}/${PACKS[currentPack].length}`;
     }
     function check(){
-      let ok=0;
-      quizQuestions.forEach((q,qi)=>{
+      const data = PACKS[currentPack];
+      let ok=0; const lines=[];
+      document.querySelectorAll('.q').forEach((block,qi)=>{
         const chosen = state.answers.get(qi);
-        const chosenEl = document.querySelectorAll('.q')[qi].querySelectorAll('.opt');
-        chosenEl.forEach((elOpt,oi)=>{
-          const isRight = q.correct.includes(oi);
-          if(isRight) elOpt.classList.add('correct');
-          if(state.answers.has(qi) && oi===chosen && !isRight) elOpt.classList.add('wrong');
+        const opts = block.querySelectorAll('.opt');
+        opts.forEach((elOpt,oi)=>{
+          const right = data[qi].correct.includes(oi);
+          if(right) elOpt.classList.add('correct');
+          if(state.answers.has(qi) && oi===chosen && !right) elOpt.classList.add('wrong');
           elOpt.style.pointerEvents='none';
         });
-        if(q.correct.includes(chosen)) ok++;
+        if(data[qi].correct.includes(chosen)) { ok++; lines.push(`✅ ${qi+1}. Верно. ${data[qi].why||''}`); }
+        else {
+          const rightText = data[qi].options[data[qi].correct[0]];
+          lines.push(`❌ ${qi+1}. Неверно. Правильный ответ: «${rightText}». ${data[qi].why||''}`);
+        }
       });
       state.checked=true;
-      el('score').innerHTML = `Результат: <span class="badge ok">${ok}</span> / <span class="badge">${quizQuestions.length}</span>`;
-      el('retry').hidden=false;
-      const best = +localStorage.getItem('agar_best')||0;
-      if(ok>best) localStorage.setItem('agar_best',ok);
+      $('score').innerHTML = `Результат: <span class="badge ok">${ok}</span> / <span class="badge">${data.length}</span>`;
+      $('retry').hidden=false;
+      $('explainBox').hidden=false;
+      $('explainContent').innerHTML = `<ul style="margin:0;padding-left:18px">${lines.map(l=>`<li>${l}</li>`).join('')}</ul>`;
+      const bestKey = 'agar_best_'+currentPack;
+      const best = +localStorage.getItem(bestKey)||0;
+      if(ok>best) localStorage.setItem(bestKey,ok);
     }
 
-    // --- ТАБЫ ---
-    const tabFlash = el('tabFlash'), tabQuiz = el('tabQuiz');
-    tabFlash.addEventListener('click',()=>switchTab('flash'));
-    tabQuiz.addEventListener('click',()=>switchTab('quiz'));
+    $('check').addEventListener('click', check);
+    $('retry').addEventListener('click', renderQuiz);
+    $('packSel').addEventListener('change', e=>{ currentPack=e.target.value; renderQuiz(); window.scrollTo({top:0,behavior:'smooth'}); });
+
+    /* ---------- ТАБЫ (всегда доступны) ---------- */
+    const tabFlash = $('tabFlash'), tabQuiz = $('tabQuiz');
     function switchTab(which){
       const isFlash = which==='flash';
-      document.getElementById('flashView').hidden=!isFlash;
-      document.getElementById('quizView').hidden=isFlash;
+      $('flashView').hidden=!isFlash;
+      $('quizView').hidden=isFlash;
       tabFlash.classList.toggle('active',isFlash);
       tabQuiz.classList.toggle('active',!isFlash);
       tabFlash.setAttribute('aria-selected',isFlash);
       tabQuiz.setAttribute('aria-selected',!isFlash);
+      // авто-скролл к началу контента
+      window.scrollTo({top:0,behavior:'smooth'});
     }
+    tabFlash.addEventListener('click',()=>switchTab('flash'));
+    tabQuiz.addEventListener('click',()=>switchTab('quiz'));
 
-    // --- INIT ---
+    /* ---------- INIT ---------- */
     renderFlash();
     renderQuiz();
-    document.getElementById('check').addEventListener('click', check);
-    document.getElementById('retry').addEventListener('click', renderQuiz);
   </script>
 </body>
 </html>
